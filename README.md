@@ -1,6 +1,7 @@
-#A guide to understanding the code:
+# A guide to understanding the code:
 
-##First look at fitting efficiency data procedure if unfamiliar
+
+## First look at fitting efficiency data procedure if unfamiliar
 
 Load Data
 
