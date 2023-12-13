@@ -1,6 +1,9 @@
-Matlab Code:
+#A guide to understanding the code:
+
+##First look at fitting efficiency data procedure if unfamiliar
 
 Load Data
+
 	Imports our custom motor data (from 4Q graph) 
 	Imports standard (noraml GEM motor) data, 
 	Imports standard points linear interpolated to our custom motor operating points (only used in visualizing in point cloud not in any actual analysis)
