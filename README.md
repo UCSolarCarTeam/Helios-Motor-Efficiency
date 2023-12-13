@@ -58,14 +58,14 @@ ShiftAndFitAllData
 
 To Run:
 	You will need to install the curveFitter toolbox
-	Run LoadData to import everything into the workspace
+	
+ 
+ 	Run LoadData to import everything into the workspace
 	Run CreatePointCloudPlot to see the general point cloud
 	Run StandardPlaneFit to see the first figure of a plane fit and second figure of a plane fit with insignificant parameters removed
 	Vairables fitresult1, gof1 will show all of the information for the plane and some goodness of fit statistics for first plane
 	Vairables fitresult2, gof2 will show all of the information for the plane and some goodness of fit statistics for first plane with insignificant parameters removed
-
 	Run CompareValues to see the plane fit then shifted to the custom data
-
 	Run ShiftAndFitAllData to see the shifted data then combined with the custom data and fitted to a plane. Generates shiftedFit,shiftedGof and CoefficientTable with all information of it.
 
 
