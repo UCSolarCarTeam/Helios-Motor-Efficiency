@@ -1,53 +1,78 @@
-#Fitting efficiency data procedure:
+Matlab Code:
 
-Conducted by Dylan Conley
+Load Data
+	Imports our custom motor data (from 4Q graph) 
+	Imports standard (noraml GEM motor) data, 
+	Imports standard points linear interpolated to our custom motor operating points (only used in visualizing in point cloud not in any actual analysis)
+	Imports solaride normal and solaride regen data
+	Sets ASC and FSGP crusing targets (based on Liams data)
+	Imports comparable conditions (the rpm's/torques of the custom motors that fall within the range of torques/rpm's we also have for standard) and their associated efficiency's of the custom data
 
-Scope: To express an equation of motor efficiency in terms of rpm and torque to determine motor efficiency of the custom motors.
+CreatePointCloudPlot
+	Creates the point cloud plot showing all imported data 
 
-##The data:
-	Custom motor values read off of 4 Quadrant Graph. These values are considered as the 'truth' and operate under our ideal conditions of our custom 2.6 motor and 65V
-	General Efficiency values from GEM motors for a 48V GEM 2.6 Standard Motor
-	Custom efficiency values provided by team Solaride for their 65V GEM 1.3 Custom motors
-	Custom efficiency regen values provided by team Solaride for their 65V GEM 1.3 Custom motors
+addToFigure
+	Function to take a nx3 matrix of rpm, torque and efficiency columns and plot it
 
-##What was done:
-	The data was visualized in MATLAB as a 3D point cloud.
-	It was discussed by Dylan, Jenny, Billy and Liam that a linear shift could be applied to the standard data to fit our custom motors.
+addPlaneToFigure
+	Function to take a shift and plot that shift to the effieincy equations as a plane
+
+gridFit
+	Function I found online to generate a plane based on linear interpolation (only used in visualziing not in analysis)
+
+StandardPlaneFit
+	Commented out code to call curveFitter tool box. Uncomment it to perform your own fitting.
+	Runs polynomial55fitGreaterThan100 and polynomial55fitGreaterThan100SignificantParameters to create two fitresult objects
+
+polynomial55fitGreaterThan100
+	Auto generated function by MATLAB based on me fitting standard data in curveFitter
+	Will create a plot showing efficiency as contour lines on torque and rpm, the plane fit and residuals between the plane and standard data
+	Code slightly modified by me just for visualization
+
+polynomial55fitGreaterThan100SignificantParameters
+	Auto generated function by MATLAB based on me fitting standard data in curveFitter with me constraining some parameters to 0
+	I selected the parameters to constrain based off if I couldn't say that they were significant with 95% confidence (if the 95% confidence bound for each point intercepted 0 then not significant)
+	Will create a plot showing efficiency as contour lines on torque and rpm, the plane fit and residuals between the plane and standard data
+
+CompareValues
+	Determines the differences between the custom comparable efficiency points and the standard fit plane.
+	Determines mean differences, standard deviation and upper/lower bounds at 1 sd confidence
 	
-	A standard plane with no shift was then fit under matlab file StandardPlaneFit.m
-		This was a 5th degree polynomial with normalized input data and is expressed in EfficiencyEquation.m
+	Determines residuals (custom data efficiency - custom data plane efficiency) based on no shift, mean shift and lower bounds shift of the standard plane
+	Plots 3 planes (no shift, mean shift and lower bounds shifts and their respective residuals
+
+Efficiency Equation
+	The result of fitresult1 (standard data fit) where I took the equation it gave and actually coded it
+	Normalized the rpm and torque then applied equation
+	Added a shift
+	Returns the efficiency 
+
+shiftedFit
+	Auto generated function by MATLAB based on me fitting standard data shifted and the custom data in curveFitter
+	Will create a plot showing efficiency as contour lines on torque and rpm, the plane fit and residuals between the plane and standard data
+	Code slightly modified by me just for visualization
+
+ShiftAndFitAllData
+   Comines shifted standard data (by the mean difference) with the custom motor data. Assigns 10x weight to the custom data and fits the combined data
+   Outputs the coefficients to a table
+
+To Run:
+	You will need to install the curveFitter toolbox
+	Run LoadData to import everything into the workspace
+	Run CreatePointCloudPlot to see the general point cloud
+	Run StandardPlaneFit to see the first figure of a plane fit and second figure of a plane fit with insignificant parameters removed
+	Vairables fitresult1, gof1 will show all of the information for the plane and some goodness of fit statistics for first plane
+	Vairables fitresult2, gof2 will show all of the information for the plane and some goodness of fit statistics for first plane with insignificant parameters removed
+
+	Run CompareValues to see the plane fit then shifted to the custom data
+
+	Run ShiftAndFitAllData to see the shifted data then combined with the custom data and fitted to a plane. Generates shiftedFit,shiftedGof and CoefficientTable with all information of it.
+
+
 	
-	A significance of parameters test was then performed at 95% confidence and parameters not deemed as significant were removed. It was determined that this made too much of an impact on the graph and signficance of parameter testing was not continued in the rest of this analysis.
-	
-  A plane for the Solaride normal data was also fit via command line prompts.
-		This was also a 5th degree polynomial with normalized input data
-	A statististical test with 95% confidence was performed and it was determined that 13/21 parameters were statistically identical between both planes.
-	Using a mix/mean of parameters in fitting the standard plane was attempted but it was unsuccessful and not continued with.
+Other stuff:
+	All the plane polynomial fitting is done through curveFitter. You can essentially just call that and then follow it to try fitting data
+	All my outlier detection was done visually based on curveFitter and residual plots
+	In my fitresults, I exlcluded rpm <= 50 as I found it increasing the residuals by a bit in the 200-1000rpm range which I did not think was ideal
 
-	Using the initial standard plane, the average difference (4.6855%) and the standard devaition (2.0480%) of it between the plane and the custom data points that operated under similar motor operating points was created.
-	The standard plane was then shifted by the average difference, no difference and average difference less the standard deviation (aka. lower bound) and visualized
-	A plot of residuals were generated comparing the plane fit to the custom motor points for each shift
-	It was determined that the best shift was the average difference.
-
-	Following the determination of the shift, all of standard efficiency data was shifted. This was combined with the custom data and a plane was fit to the mix of the data. The custom data was assigned a weight 10x of the standard shifted data due to it being considered the most accurate. The 10x shift is rather arbitrarty and other values could be explored further.
-		Based on this data, an iterative robust least squares fit was used. 
-		The x-y intercept was set to 0 based on some research that the efficiency is 0 at 0 rpm and torque
-		This created a better fit that signficiacntly reduced the sum square of the residuals
-		Including outlier operating conditions that significantly increased the error, the adjustment was completed with a RMSE of 2.5% which I would consider excellent based on the noise and lack of pattern in some of the parts of the figure
-		Looking only at the custom motor data and excluding a point operating at almost 0 rpm, the RMSE was 1.7% which is again a strong fit
-
-	This data was visualized with the outputs being a contour graph, 3d plane fit and plot of the residuals. The custom motor data is highlighted as white in these grpahs.
-	The equation was then outputted to a csv table as a list of the coefficients.
-
-	One other thing considered is the difference between regen and normal efficiency. This could be easily visualized in the solaride data with there being extremely small differences at low torque and larger differences (visually looking around/up 5-10%) at extremely high torques. Especially considering the almost exact match in the bulk of the operating ranges, no specific calculations were made. Given a 2.5% RMSE error, any adjustment applied for the regen would likely be statistically insignificant.
-
-#End Conlusions
-	A 5th degree, 20 term polynomial was determined for efficiency as a function of rpm and torque for the custom GEM 2.6 motors our team owns.
-	This was done by fitting standard data, finding the mean shift to the custom data and then refitting the data using the custom data and the standard data shifted.
-	This equation is valid for normal and regenrative operation. It is bounded by the extreme limits of the torque and speed data that can be seen in the 4Q graph.
-
-	RMSE errors of 2.5% overall and 1.7% in the custom data only are excellent indicators
-
-	The solaride data matched the standard data for 13/21 plane parameters using normalized data but a complete match between them could not be completed.
-	Parameter signficance testing was also explored but unsuccessful in simplying the equation without impacting the plane.
 	
