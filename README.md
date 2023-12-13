@@ -42,6 +42,7 @@ polynomial55fitGreaterThan100SignificantParameters
 	Will create a plot showing efficiency as contour lines on torque and rpm, the plane fit and residuals between the plane and standard data
 
 CompareValues
+
 	Determines the differences between the custom comparable efficiency points and the standard fit plane.
 	Determines mean differences, standard deviation and upper/lower bounds at 1 sd confidence
 	Determines residuals (custom data efficiency - custom data plane efficiency) based on no shift, mean shift and lower bounds shift of the standard plane
@@ -62,8 +63,8 @@ shiftedFit
 
 ShiftAndFitAllData
 
-   Comines shifted standard data (by the mean difference) with the custom motor data. Assigns 10x weight to the custom data and fits the combined data
-   Outputs the coefficients to a table
+   	Combines shifted standard data (by the mean difference) with the custom motor data. Assigns 10x weight to the custom data and fits the combined data
+   	Outputs the coefficients to a table
 
 To Run:
 
